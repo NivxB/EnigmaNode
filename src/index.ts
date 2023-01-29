@@ -19,8 +19,7 @@ const enigmaMachine = new Enigma(
   new EnigmaReflector("B", REFLECTOR_B)
 );
 
-const TEST_INPUT = "AYPAPI";
-//const TEST_INPUT = 'SKOLLCUTEDOG'
+const TEST_INPUT = "SKOLLCUTEDOG";
 //const TEST_INPUT = 'IGWZYUITDVXS'
 let output = enigmaMachine.encodeWord(TEST_INPUT)
 
