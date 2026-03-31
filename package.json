@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "ts-node ./src/index.ts",
+    "start": "ts-node ./src/debug.ts",
     "lint": "eslint .",
     "format": "biome format --write",
     "build": "tsc"
