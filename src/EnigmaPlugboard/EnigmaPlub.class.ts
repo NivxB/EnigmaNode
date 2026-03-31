@@ -1,13 +1,15 @@
+import { DictionaryChar, getIndexFromLetter } from "../utils/Dictionary";
+
 export class EnigmaPlug {
   private pointA: number;
   private pointB: number;
 
-  constructor(pointA: number, pointB: number) {
+  constructor(pointA: DictionaryChar, pointB: DictionaryChar) {
     if (pointA === pointB) {
       throw Error(`Invalid plug configuration ${pointA}:${pointB}`);
     }
-    this.pointA = pointA;
-    this.pointB = pointB;
+    this.pointA = getIndexFromLetter(pointA);
+    this.pointB = getIndexFromLetter(pointB);
   }
 
   public getPointA() {
@@ -27,7 +29,7 @@ export class EnigmaPlug {
     return null;
   }
 
-  public isEqual(otherPlug: EnigmaPlug){
+  public isEqual(otherPlug: EnigmaPlug) {
     return this.pointA === otherPlug.pointA && this.pointB == otherPlug.pointB;
   }
 }

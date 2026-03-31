@@ -1,2 +1,2 @@
-export * from "./EnigmaRotor.class"
-export * from "./EnigmaRotor.interface"
+export * from "./EnigmaRotor.class";
+export * from "./EnigmaRotor.interface";

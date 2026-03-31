@@ -1,18 +1,13 @@
-import { DEFAULT_DICTIONARY } from "../Enigma.configuration";
+import { getLetterFromIndex } from "./Dictionary";
 
-export namespace EnigmaLogger {
-  const transformNumberToLetter = (input: number) =>
-    DEFAULT_DICTIONARY.charAt(input);
+export const debug = (letter: number, ...args: unknown[]) => {
+  if (process.env.DEBUG) {
+    console.debug(getLetterFromIndex(letter), ...args);
+  }
+};
 
-  export const debug = (letter: number, ...args) => {
-    if (process.env.DEBUG) {
-      console.debug(transformNumberToLetter(letter), ...args);
-    }
-  };
-
-  export const debugNewLine = () => {
-    if (process.env.DEBUG) {
-      console.debug("\n");
-    }
-  };
-}
+export const debugNewLine = () => {
+  if (process.env.DEBUG) {
+    console.debug("\n");
+  }
+};

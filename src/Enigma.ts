@@ -1,71 +1,69 @@
-import { DEFAULT_DICTIONARY } from "./Enigma.configuration";
 import { EnigmaPlugboard } from "./EnigmaPlugboard";
 import { EnigmaReflector } from "./EnigmaReflector";
 import { EnigmaRotor } from "./EnigmaRotor";
-import { EnigmaLogger } from "./utils/Logger";
+import {
+  DictionaryChar,
+  getIndexFromLetter,
+  DEFAULT_DICTIONARY,
+} from "./utils/Dictionary";
+import * as EnigmaLogger from "./utils/Logger";
 
 export class Enigma {
-  private rotors: Array<EnigmaRotor>;
+  private rotors: EnigmaRotor[];
   private plugboard: EnigmaPlugboard;
   private reflector: EnigmaReflector;
 
   constructor(
-    rotors?: Array<EnigmaRotor>,
-    plugboard?: EnigmaPlugboard,
-    reflector?: EnigmaReflector
+    rotors: [EnigmaRotor, EnigmaRotor, EnigmaRotor],
+    plugboard: EnigmaPlugboard,
+    reflector: EnigmaReflector,
   ) {
-    this.rotors = rotors || [];
-    this.plugboard = plugboard || new EnigmaPlugboard();
+    // So from logic perspective rotors are handled from back to front
+    // but in configuration they are called from front to back
+    // to keep config simple, do reverse here
+    this.rotors = rotors.reverse();
+    this.plugboard = plugboard;
     this.reflector = reflector;
   }
 
-  public encodeLetter(incomingLetter: string) {
-    let encodedLetter;
-    encodedLetter = DEFAULT_DICTIONARY.indexOf(incomingLetter.toUpperCase());
-    EnigmaLogger.debug(encodedLetter, " INCOMING LETTER");
+  public encodeLetter(incomingLetter: DictionaryChar) {
+    let encodedLetterIndex: number;
+    encodedLetterIndex = getIndexFromLetter(incomingLetter);
+    EnigmaLogger.debug(encodedLetterIndex, " INCOMING LETTER");
 
-    encodedLetter = this.plugboard.getOutput(encodedLetter);
-    EnigmaLogger.debug(encodedLetter, "1ST PLUG FLOW");
+    encodedLetterIndex = this.plugboard.getOutput(encodedLetterIndex);
+    EnigmaLogger.debug(encodedLetterIndex, "1ST PLUG FLOW");
 
     let moveRotorPosition = true;
     for (let i = 0; i < this.rotors.length; i++) {
       const currentRotor = this.rotors[i];
       if (moveRotorPosition) {
-        moveRotorPosition = currentRotor.moveRotorPosition();
-        EnigmaLogger.debug(
-          encodedLetter,
-          "MOVED ROTOR " + currentRotor.getId()
-        );
+        moveRotorPosition = currentRotor.moveRotorPosition() ?? false;
+        EnigmaLogger.debug(encodedLetterIndex, "MOVED ROTOR ");
       }
-      encodedLetter = currentRotor.getOutgoingLetter(encodedLetter);
-      EnigmaLogger.debug(
-        encodedLetter,
-        "INCOMING ROTOR " + currentRotor.getId() + " OUTPUT"
-      );
+      encodedLetterIndex = currentRotor.getOutgoingLetter(encodedLetterIndex);
+      EnigmaLogger.debug(encodedLetterIndex, "INCOMING ROTOR OUTPUT");
     }
-    encodedLetter = this.reflector.getOutput(encodedLetter);
-    EnigmaLogger.debug(encodedLetter, "REFLECTOR OUTPUT");
+    encodedLetterIndex = this.reflector.getOutput(encodedLetterIndex);
+    EnigmaLogger.debug(encodedLetterIndex, "REFLECTOR OUTPUT");
 
     for (let i = this.rotors.length - 1; i >= 0; i--) {
       const currentRotor = this.rotors[i];
-      encodedLetter = currentRotor.getIncomingLetter(encodedLetter);
-      EnigmaLogger.debug(
-        encodedLetter,
-        "OUTGOING ROTOR " + currentRotor.getId() + " OUTPUT"
-      );
+      encodedLetterIndex = currentRotor.getIncomingLetter(encodedLetterIndex);
+      EnigmaLogger.debug(encodedLetterIndex, "OUTGOING ROTOR OUTPUT");
     }
 
-    encodedLetter = this.plugboard.getOutput(encodedLetter);
-    EnigmaLogger.debug(encodedLetter, "2ND PLUG FLOW - OUTGOING LETTER");
+    encodedLetterIndex = this.plugboard.getOutput(encodedLetterIndex);
+    EnigmaLogger.debug(encodedLetterIndex, "2ND PLUG FLOW - OUTGOING LETTER");
 
-    return DEFAULT_DICTIONARY.charAt(encodedLetter);
+    return DEFAULT_DICTIONARY[encodedLetterIndex]!;
   }
 
   public encodeWord(inputWord: string) {
     return inputWord
       .split("")
       .map((l) => {
-        const outputLetter = this.encodeLetter(l);
+        const outputLetter = this.encodeLetter(l as DictionaryChar);
         EnigmaLogger.debugNewLine();
         return outputLetter;
       })

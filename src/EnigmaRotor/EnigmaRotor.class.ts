@@ -1,28 +1,22 @@
+import { DictionaryChar, getIndexFromLetter } from "../utils/Dictionary";
 import {
   EnigmaRotorConfiguration,
   ROTOR_CONFIGURATION_LENGTH,
 } from "./EnigmaRotor.interface";
 
 export class EnigmaRotor {
-  private id: string;
   private ringOffset: number;
   private currentPosition: number;
   private configuration: Array<EnigmaRotorConfiguration>;
 
   constructor(
-    id: string,
-    initialPosition: number,
-    ringOffset: number,
-    configuration: Array<EnigmaRotorConfiguration>
+    configuration: Array<EnigmaRotorConfiguration>,
+    initialPosition: DictionaryChar,
+    ringOffset: DictionaryChar,
   ) {
-    this.id = id;
-    this.ringOffset = ringOffset;
-    this.currentPosition = initialPosition;
+    this.ringOffset = getIndexFromLetter(ringOffset);
+    this.currentPosition = getIndexFromLetter(initialPosition);
     this.configuration = configuration;
-  }
-
-  public getId() {
-    return this.id;
   }
 
   public getPosition() {
@@ -33,10 +27,13 @@ export class EnigmaRotor {
     this.currentPosition = position;
   }
 
-  private getConnection(connection: { input?: number; output?: number }) {
+  private getConnection(connection: {
+    input?: number;
+    output?: number;
+  }): EnigmaRotorConfiguration {
     return this.configuration.find(
-      (c) => c.input === connection.input || c.output === connection.output
-    );
+      (c) => c.input === connection.input || c.output === connection.output,
+    )!;
   }
 
   public getOutgoingLetter(input: number) {

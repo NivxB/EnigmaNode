@@ -1,4 +1,4 @@
 export interface EnigmaReflectorConfiguration {
-    input: number,
-    output: number,
+  input: number;
+  output: number;
 }

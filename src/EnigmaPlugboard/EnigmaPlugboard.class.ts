@@ -23,7 +23,7 @@ export class EnigmaPlugboard {
           currentPlug.getPointB() === comparePlug.getPointB()
         ) {
           throw Error(
-            `Invalid plugboard configuration ${currentPlug}:${comparePlug}`
+            `Invalid plugboard configuration ${currentPlug}:${comparePlug}`,
           );
         }
       }

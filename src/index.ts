@@ -11,16 +11,16 @@ import { EnigmaRotor } from "./EnigmaRotor";
 
 const enigmaMachine = new Enigma(
   [
-    new EnigmaRotor("III", 0, 1, ROTOR_III),
-    new EnigmaRotor("II", 0, 1, ROTOR_II),
-    new EnigmaRotor("I", 0, 1, ROTOR_I),
+    new EnigmaRotor(ROTOR_I, "A", "B"),
+    new EnigmaRotor(ROTOR_II, "A", "B"),
+    new EnigmaRotor(ROTOR_III, "A", "B"),
   ],
-  new EnigmaPlugboard([new EnigmaPlug(0, 1)]),
-  new EnigmaReflector("B", REFLECTOR_B)
+  new EnigmaPlugboard([new EnigmaPlug("S", "A"), new EnigmaPlug("K", "O")]),
+  new EnigmaReflector(REFLECTOR_B),
 );
 
-const TEST_INPUT = "SKOLLCUTEDOG";
-//const TEST_INPUT = 'IGWZYUITDVXS'
-let output = enigmaMachine.encodeWord(TEST_INPUT)
+//const TEST_INPUT = "SKOLLCUTEDOG";
+const TEST_INPUT = "DLCUMLFVMXYD";
+const output = enigmaMachine.encodeWord(TEST_INPUT);
 
 console.log(output);

@@ -1,8 +1,6 @@
 import { EnigmaReflectorConfiguration } from "./EnigmaReflector";
 import { EnigmaRotorConfiguration } from "./EnigmaRotor";
 
-export const DEFAULT_DICTIONARY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 export const ROTOR_I: Array<EnigmaRotorConfiguration> = [
   { input: 0, output: 4 },
   { input: 1, output: 10 },

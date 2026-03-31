@@ -1,2 +1,2 @@
-export * from "./EnigmaReflector.class"
-export * from "./EnigmaReflector.interface"
+export * from "./EnigmaReflector.class";
+export * from "./EnigmaReflector.interface";
