@@ -4,10 +4,9 @@ import { EnigmaRotor } from "./EnigmaRotor";
 import {
   DictionaryChar,
   getIndexFromLetter,
-  DEFAULT_DICTIONARY,
   getLetterFromIndex,
 } from "./utils/Dictionary";
-import * as EnigmaLogger from "./utils/Logger";
+import * as Logger from "./utils/Logger";
 
 interface EncodeTraceStage {
   stage: string;
@@ -49,7 +48,7 @@ export class Enigma {
 
     // Double Step Anomally
     if (midAtNotch) {
-      EnigmaLogger.debug(0, "DOUBLE STEP ANOMALLY");
+      Logger.debug(0, "DOUBLE STEP ANOMALLY");
       this.rotors[2].moveRotorPosition();
       this.rotors[1].moveRotorPosition();
     } else if (rightAtNotch) {
@@ -62,11 +61,11 @@ export class Enigma {
     const initialRotorTrace = this.getRotorsTrace();
 
     const encodedLetterIndex = getIndexFromLetter(incomingLetter);
-    EnigmaLogger.debug(encodedLetterIndex, " INCOMING LETTER");
+    Logger.debug(encodedLetterIndex, " INCOMING LETTER");
     const letterStages: EncodeTraceStage[] = [];
 
     const plugboardFwdIndex = this.plugboard.getOutput(encodedLetterIndex);
-    EnigmaLogger.debug(plugboardFwdIndex, "1ST PLUG FLOW");
+    Logger.debug(plugboardFwdIndex, "1ST PLUG FLOW");
     letterStages.push({
       stage: "plugboard-in",
       input: getLetterFromIndex(encodedLetterIndex),
@@ -79,7 +78,7 @@ export class Enigma {
     for (let i = 0; i < this.rotors.length; i++) {
       const rotorIn = rotorsFwdIndex;
       rotorsFwdIndex = this.rotors[i].getOutgoingLetter(rotorIn);
-      EnigmaLogger.debug(rotorsFwdIndex, "INCOMING ROTOR OUTPUT");
+      Logger.debug(rotorsFwdIndex, "INCOMING ROTOR OUTPUT");
       letterStages.push({
         stage: `rotor-fwd-${i}`,
         input: getLetterFromIndex(rotorIn),
@@ -88,7 +87,7 @@ export class Enigma {
     }
 
     const reflectorIndex = this.reflector.getOutput(rotorsFwdIndex);
-    EnigmaLogger.debug(reflectorIndex, "REFLECTOR OUTPUT");
+    Logger.debug(reflectorIndex, "REFLECTOR OUTPUT");
     letterStages.push({
       stage: "reflector",
       input: getLetterFromIndex(rotorsFwdIndex),
@@ -99,7 +98,7 @@ export class Enigma {
     for (let i = this.rotors.length - 1; i >= 0; i--) {
       const rotorIn = rotorsBwdIndex;
       rotorsBwdIndex = this.rotors[i].getIncomingLetter(rotorIn);
-      EnigmaLogger.debug(rotorsBwdIndex, "OUTGOING ROTOR OUTPUT");
+      Logger.debug(rotorsBwdIndex, "OUTGOING ROTOR OUTPUT");
       letterStages.push({
         stage: `rotor-bwd-${i}`,
         input: getLetterFromIndex(rotorIn),
@@ -108,7 +107,7 @@ export class Enigma {
     }
 
     const plugboardBwdIndex = this.plugboard.getOutput(rotorsBwdIndex);
-    EnigmaLogger.debug(plugboardBwdIndex, "2ND PLUG FLOW - OUTGOING LETTER");
+    Logger.debug(plugboardBwdIndex, "2ND PLUG FLOW - OUTGOING LETTER");
     letterStages.push({
       stage: "plugboard-out",
       input: getLetterFromIndex(rotorsBwdIndex),
@@ -129,11 +128,12 @@ export class Enigma {
   }
 
   public encodeWord(inputWord: string) {
+    this.encodeTraces = [];
     return inputWord
       .split("")
       .map((l) => {
         const outputLetter = this.encodeLetter(l as DictionaryChar);
-        EnigmaLogger.debugNewLine();
+        Logger.debugNewLine();
         return outputLetter.output;
       })
       .join("");

@@ -2,10 +2,16 @@ import { EnigmaPlug } from "./EnigmaPlug.class";
 
 export class EnigmaPlugboard {
   private plugs: Array<EnigmaPlug>;
+  private swapMap: Map<number, number>;
 
   constructor(plugs?: Array<EnigmaPlug>) {
     this.validatePlugConnections(plugs || []);
     this.plugs = plugs || [];
+    this.swapMap = new Map();
+    for (const plug of this.plugs) {
+      this.swapMap.set(plug.getPointA(), plug.getPointB());
+      this.swapMap.set(plug.getPointB(), plug.getPointA());
+    }
   }
 
   private validatePlugConnections(plugs: Array<EnigmaPlug>) {
@@ -34,22 +40,21 @@ export class EnigmaPlugboard {
     const newPlugboard = [...this.plugs, plug];
     this.validatePlugConnections(newPlugboard);
     this.plugs.push(plug);
+    this.swapMap.set(plug.getPointA(), plug.getPointB());
+    this.swapMap.set(plug.getPointB(), plug.getPointA());
   }
 
   public removePlug(plug: EnigmaPlug) {
     const removeIndex = this.plugs.findIndex((p) => p.isEqual(plug));
     if (removeIndex !== -1) {
+      const removed = this.plugs[removeIndex];
       this.plugs.splice(removeIndex, 1);
+      this.swapMap.delete(removed.getPointA());
+      this.swapMap.delete(removed.getPointB());
     }
   }
 
   public getOutput(input: number) {
-    for (let i = 0; i < this.plugs.length; i++) {
-      const output = this.plugs[i].getOutput(input);
-      if (output !== null) {
-        return output;
-      }
-    }
-    return input;
+    return this.swapMap.get(input) ?? input;
   }
 }

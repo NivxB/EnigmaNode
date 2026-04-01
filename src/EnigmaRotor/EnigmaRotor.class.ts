@@ -39,38 +39,35 @@ export class EnigmaRotor {
     )!;
   }
 
-  public getOutgoingLetter(input: number) {
-    const transformInput =
+  private applyOffset(index: number): number {
+    return (
       (ROTOR_CONFIGURATION_LENGTH -
         this.ringOffset +
-        input +
+        index +
         this.currentPosition) %
-      ROTOR_CONFIGURATION_LENGTH;
+      ROTOR_CONFIGURATION_LENGTH
+    );
+  }
 
-    const encodedLetter = this.getConnection({ input: transformInput }).output;
+  private removeOffset(index: number): number {
     return (
       (ROTOR_CONFIGURATION_LENGTH +
-        encodedLetter -
+        index -
         this.currentPosition +
         this.ringOffset) %
       ROTOR_CONFIGURATION_LENGTH
     );
   }
 
+  public getOutgoingLetter(input: number) {
+    return this.removeOffset(
+      this.getConnection({ input: this.applyOffset(input) }).output,
+    );
+  }
+
   public getIncomingLetter(output: number) {
-    const transformOutput =
-      (ROTOR_CONFIGURATION_LENGTH -
-        this.ringOffset +
-        output +
-        this.currentPosition) %
-      ROTOR_CONFIGURATION_LENGTH;
-    const encodedLetter = this.getConnection({ output: transformOutput }).input;
-    return (
-      (ROTOR_CONFIGURATION_LENGTH +
-        encodedLetter -
-        this.currentPosition +
-        this.ringOffset) %
-      ROTOR_CONFIGURATION_LENGTH
+    return this.removeOffset(
+      this.getConnection({ output: this.applyOffset(output) }).input,
     );
   }
 
