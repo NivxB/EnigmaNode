@@ -18,6 +18,8 @@ interface EncodeTraceStage {
 interface EncodeTrace {
   input: DictionaryChar;
   output: DictionaryChar;
+  rotorsBefore: string;
+  rotorsAfter: string;
   stages: EncodeTraceStage[];
 }
 
@@ -35,7 +37,7 @@ export class Enigma {
     // So from logic perspective rotors are handled from back to front
     // but in configuration they are called from front to back
     // to keep config simple, do reverse here
-    this.rotors = [...rotors.reverse()];
+    this.rotors = [...rotors].reverse();
     this.plugboard = plugboard;
     this.reflector = reflector;
     this.encodeTraces = [];
@@ -57,6 +59,8 @@ export class Enigma {
   }
 
   public encodeLetter(incomingLetter: DictionaryChar) {
+    const initialRotorTrace = this.getRotorsTrace();
+
     const encodedLetterIndex = getIndexFromLetter(incomingLetter);
     EnigmaLogger.debug(encodedLetterIndex, " INCOMING LETTER");
     const letterStages: EncodeTraceStage[] = [];
@@ -110,11 +114,13 @@ export class Enigma {
       input: getLetterFromIndex(rotorsBwdIndex),
       output: getLetterFromIndex(plugboardBwdIndex),
     });
-    const finalEncodedLetter = DEFAULT_DICTIONARY[plugboardBwdIndex]!;
+    const outputRotorTrace = this.getRotorsTrace();
 
     const encodeTrace = {
       input: getLetterFromIndex(encodedLetterIndex),
       output: getLetterFromIndex(plugboardBwdIndex),
+      rotorsBefore: initialRotorTrace,
+      rotorsAfter: outputRotorTrace,
       stages: letterStages,
     };
     this.encodeTraces.push(encodeTrace);
@@ -135,7 +141,13 @@ export class Enigma {
 
   public getRotorPositions() {
     // return left -> right
-    return [...this.rotors.reverse()].map((rotor) => rotor.getPosition());
+    return [...this.rotors].reverse().map((rotor) => rotor.getPosition());
+  }
+
+  public getRotorsTrace() {
+    return this.getRotorPositions()
+      .map((letterIndex) => getLetterFromIndex(letterIndex))
+      .join("");
   }
 
   public reset() {
