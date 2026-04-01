@@ -15,7 +15,7 @@ const enigmaMachine = new Enigma(
     new EnigmaRotor(ROTOR_II, "A", "B"),
     new EnigmaRotor(ROTOR_III, "A", "B"),
   ],
-  new EnigmaPlugboard([new EnigmaPlug("S", "A"), new EnigmaPlug("K", "O")]),
+  new EnigmaPlugboard([]),
   new EnigmaReflector(REFLECTOR_B),
 );
 

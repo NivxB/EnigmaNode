@@ -1,4 +1,4 @@
-import { EnigmaPlug } from "./EnigmaPlub.class";
+import { EnigmaPlug } from "./EnigmaPlug.class";
 
 export class EnigmaPlugboard {
   private plugs: Array<EnigmaPlug>;
@@ -46,7 +46,7 @@ export class EnigmaPlugboard {
   public getOutput(input: number) {
     for (let i = 0; i < this.plugs.length; i++) {
       const output = this.plugs[i].getOutput(input);
-      if (output) {
+      if (output !== null) {
         return output;
       }
     }

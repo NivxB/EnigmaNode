@@ -6,6 +6,8 @@ import {
 
 export class EnigmaRotor {
   private ringOffset: number;
+  private initialPosition: number;
+
   private currentPosition: number;
   private configuration: Array<EnigmaRotorConfiguration>;
 
@@ -15,6 +17,7 @@ export class EnigmaRotor {
     ringOffset: DictionaryChar,
   ) {
     this.ringOffset = getIndexFromLetter(ringOffset);
+    this.initialPosition = getIndexFromLetter(initialPosition);
     this.currentPosition = getIndexFromLetter(initialPosition);
     this.configuration = configuration;
   }
@@ -75,7 +78,13 @@ export class EnigmaRotor {
     this.currentPosition =
       (ROTOR_CONFIGURATION_LENGTH + this.currentPosition + 1) %
       ROTOR_CONFIGURATION_LENGTH;
-    const shouldTurnOver = this.configuration[this.currentPosition].turnOver;
-    return shouldTurnOver;
+  }
+
+  public isAtNotch() {
+    return this.configuration[this.currentPosition].notch;
+  }
+
+  public reset() {
+    return (this.currentPosition = this.initialPosition);
   }
 }
